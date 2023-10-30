@@ -37,8 +37,6 @@ export const HomeScreen = () => {
       } catch (error) {
         dispatch({ type: 'FETCH_FAIL', payload: error.message });
       }
-
-      // setProducts(result.data);
     };
     fetchData();
   }, []);

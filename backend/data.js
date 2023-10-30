@@ -1,7 +1,7 @@
 const data = {
   products: [
     {
-      _id: 1,
+      // _id: 1,
       name: 'Nike Slim shirt',
       slug: 'nike-slim-shirt',
       category: 'Shirts',
@@ -14,9 +14,9 @@ const data = {
       description: 'high quality product',
     },
     {
-      _id: 2,
-      name: 'Nike Slim shirt',
-      slug: 'nike-slim-pants',
+      // _id: 2,
+      name: 'Vans Black Shoes',
+      slug: 'vans-black-shoes',
       category: 'Shirts',
       image: '/images/d2.jpg',
       price: 120,
@@ -27,9 +27,9 @@ const data = {
       description: 'high quality product',
     },
     {
-      _id: 3,
-      name: 'Nike Slim shirt',
-      slug: 'nike-large-shirt',
+      // _id: 3,
+      name: 'Converse Large Sneakers',
+      slug: 'converse-large-sneakers',
       category: 'Shirts',
       image: '/images/d3.jpg',
       price: 120,
@@ -40,9 +40,9 @@ const data = {
       description: 'high quality product',
     },
     {
-      _id: 4,
-      name: 'Nike Slim shirt',
-      slug: 'nike-large-pants',
+      // _id: 4,
+      name: 'Gloves Leather Moto',
+      slug: 'gloves-leather-moto',
       category: 'Shirts',
       image: '/images/d1.jpg',
       price: 120,
@@ -53,9 +53,9 @@ const data = {
       description: 'high quality product',
     },
     {
-      _id: 4,
-      name: 'Nike Slim shirt',
-      slug: 'nike-large-pantsss',
+      // _id: 5,
+      name: 'Puma Slim shirt',
+      slug: 'puma-large-pants',
       category: 'Shirts',
       image: '/images/d3.jpg',
       price: 120,
