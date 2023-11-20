@@ -3,7 +3,7 @@ import { Form, Button } from 'react-bootstrap';
 import { useContext, useEffect, useState } from 'react';
 import { Store } from '../Store';
 import { useNavigate } from 'react-router-dom';
-import { CheckcoutSteps } from '../components/CheckcoutSteps';
+import { CheckoutSteps } from '../components/CheckoutSteps';
 
 export const ShippingAddressScreen = () => {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ export const ShippingAddressScreen = () => {
   const submitHandler = (e) => {
     e.preventDefault();
     ctxDispatch({
-      type: 'SAVE_SHIPPONG_ADDRESS',
+      type: 'SAVE_SHIPPING_ADDRESS',
       payload: {
         fullName,
         address,
@@ -56,7 +56,7 @@ export const ShippingAddressScreen = () => {
         <title>Shipping Address</title>
       </Helmet>
 
-      <CheckcoutSteps step1 step2></CheckcoutSteps>
+      <CheckoutSteps step1 step2></CheckoutSteps>
 
       <div className="container small-container">
         <h1 className="my-3">Shipping Address</h1>

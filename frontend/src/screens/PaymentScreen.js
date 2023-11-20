@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { Form, Button } from 'react-bootstrap';
-import { CheckcoutSteps } from '../components/CheckcoutSteps';
+import { CheckoutSteps } from '../components/CheckoutSteps';
 import { useContext, useEffect, useState } from 'react';
 import { Store } from '../Store';
 import { useNavigate } from 'react-router-dom';
@@ -34,7 +34,7 @@ export const PaymentScreen = () => {
       <Helmet>
         <title>Payment Method</title>
       </Helmet>
-      <CheckcoutSteps step1 step2 step3></CheckcoutSteps>
+      <CheckoutSteps step1 step2 step3></CheckoutSteps>
 
       <div className="container small-container">
         <h1 className="my-3">Payment Method</h1>
