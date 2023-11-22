@@ -1,20 +1,35 @@
 import { CheckoutSteps } from '../components/CheckoutSteps';
 import { Helmet } from 'react-helmet-async';
-import {
-  Form,
-  Button,
-  Row,
-  Col,
-  Card,
-  ListGroup,
-  ListGroupItem,
-} from 'react-bootstrap';
-import { useContext, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import { getError } from '../utils';
+import axios from 'axios';
+import { Button, Row, Col, Card, ListGroup } from 'react-bootstrap';
+import { useContext, useEffect, useReducer } from 'react';
 import { Store } from '../Store';
+import { LoadingBox } from '../components/LoadingBox';
 import { Link, useNavigate } from 'react-router-dom';
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'CREATE_REQUEST':
+      return { ...state, loading: true };
+    case 'CREATE_SUCCESS':
+      return { ...state, loading: false };
+    case 'CREATE_FAIL':
+      return { ...state, loading: false };
+    default:
+      return state;
+  }
+};
 
 export const PlaceOrderScreen = () => {
   const navigate = useNavigate();
+
+  const [{ loading }, dispatch] = useReducer(reducer, {
+    loading: false,
+    error: '',
+  });
+
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { cart, userInfo } = state;
 
@@ -27,7 +42,35 @@ export const PlaceOrderScreen = () => {
   cart.taxPrice = round2(0.15 * cart.itemsPrice);
   cart.totalPrice = cart.itemsPrice + cart.shippingPrice + cart.taxPrice;
 
-  const placeOrderHandler = async () => {};
+  const placeOrderHandler = async () => {
+    try {
+      dispatch({ type: 'CREATE_REQUEST' });
+      const { data } = await axios.post(
+        '/api/orders',
+        {
+          orderItems: cart.cartItems,
+          shippingAddress: cart.shippingAddress,
+          itemsPrice: cart.itemsPrice,
+          shippingPrice: cart.shippingPrice,
+          taxPrice: cart.taxPrice,
+          paymentMethod: cart.paymentMethod,
+          totalPrice: cart.totalPrice,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        }
+      );
+      ctxDispatch({ type: 'CART_CLEAR' });
+      dispatch({ type: 'CREATE_SUCCESS' });
+      localStorage.removeItem('cartItems');
+      navigate(`/order/${data.order._id}`);
+    } catch (error) {
+      dispatch({ type: 'CREATE_FAIL' });
+      toast.error(getError(error));
+    }
+  };
 
   useEffect(() => {
     if (!cart.paymentMethod) {
@@ -146,6 +189,7 @@ export const PlaceOrderScreen = () => {
                     >
                       Place Order
                     </Button>
+                    {loading && <LoadingBox />}
                   </div>
                 </ListGroup.Item>
               </ListGroup>
