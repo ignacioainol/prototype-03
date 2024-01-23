@@ -1,5 +1,17 @@
 {
   "dependencies": {
     "nodemon": "^3.0.1"
-  }
+  },
+  "name": "ecommerce_udemy",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "build": "cd backend && npm install && cd ../frontend && npm install -f && npm run build",
+    "start": "node backend/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
 }

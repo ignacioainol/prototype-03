@@ -1,0 +1,29 @@
+version: '3'
+services:
+  react-app:
+    build:
+      context: ./frontend
+    ports:
+      - '3000:3000'
+    depends_on:
+      - nodejs-app
+
+  nodejs-app:
+    build:
+      context: ./backend
+    ports:
+      - '5000:5000'
+    environment:
+      MONGO_URI: 'mongodb://localhost/ecommerce'
+    depends_on:
+      - mongo
+
+  mongo:
+    image: 'mongo:latest'
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
