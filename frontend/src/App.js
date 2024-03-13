@@ -6,8 +6,8 @@ import { ProductScreen } from './screens/ProductScreen';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import { LinkContainer } from 'react-router-bootstrap';
-import { Badge, Nav, NavDropdown } from 'react-bootstrap';
-import { useContext } from 'react';
+import { Badge, Button, Nav, NavDropdown } from 'react-bootstrap';
+import { useContext, useState } from 'react';
 import { Store } from './Store';
 import { CartScreen } from './screens/CartScreen';
 import { SigninScreen } from './screens/SigninScreen';
@@ -30,13 +30,26 @@ function App() {
     localStorage.removeItem('paymentMethod');
     window.location.href = '/signin';
   };
+  const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
   return (
     <BrowserRouter>
-      <div className="d-flex flex-column site-container">
+      <div
+        className={
+          sidebarIsOpen
+            ? 'd-flex flex-column site-container active-cont'
+            : 'd-flex flex-column site-container'
+        }
+      >
         <ToastContainer position="bottom-center" limit={1} />
         <header>
           <Navbar bg="dark" variant="dark" expand="lg">
             <Container>
+              <Button
+                variant="dark"
+                onClick={() => setSidebarIsOpen(!sidebarIsOpen)}
+              >
+                <i className="fas fa-bars"></i>
+              </Button>
               <LinkContainer to="/">
                 <Navbar.Brand>Store Proptype</Navbar.Brand>
               </LinkContainer>
@@ -78,6 +91,19 @@ function App() {
             </Container>
           </Navbar>
         </header>
+        <div
+          className={
+            sidebarIsOpen
+              ? 'active-nav sidebar-navbar d-flex justify-content-between flex-wrap flex-column'
+              : 'sidebar-navbar d-flex justify-content-between flex-wrap flex-column'
+          }
+        >
+          <Nav className="flex-column text-white w-100 p-2">
+            <Nav.Item>
+              <strong>Categories</strong>
+            </Nav.Item>
+          </Nav>
+        </div>
         <main>
           <Container className="mt-3">
             <Routes>
