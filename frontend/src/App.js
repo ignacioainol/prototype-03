@@ -1,13 +1,13 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { HomeScreen } from './screens/HomeScreen';
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ProductScreen } from './screens/ProductScreen';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Badge, Button, Nav, NavDropdown } from 'react-bootstrap';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Store } from './Store';
 import { CartScreen } from './screens/CartScreen';
 import { SigninScreen } from './screens/SigninScreen';
@@ -18,6 +18,9 @@ import { PlaceOrderScreen } from './screens/PlaceOrderScreen';
 import { OrderScreen } from './screens/OrderScreen';
 import { OrderHistoryScreen } from './screens/OrderHistoryScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
+import { getError } from './utils';
+import axios from 'axios';
+import { SearchBox } from './components/SearchBox';
 
 function App() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -31,6 +34,21 @@ function App() {
     window.location.href = '/signin';
   };
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data } = await axios.get(`/api/products/categories`);
+        setCategories(data);
+      } catch (error) {
+        toast.error(getError(error));
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   return (
     <BrowserRouter>
       <div
@@ -55,6 +73,7 @@ function App() {
               </LinkContainer>
               <Navbar.Toggle aria-controls="basic-navbar-nav" />
               <Navbar.Collapse id="basic-navbar-nav">
+                <SearchBox />
                 <Nav className="me-auto w-100 justify-content-end">
                   <Link to="/cart" className="nav-link">
                     Cart
@@ -102,6 +121,19 @@ function App() {
             <Nav.Item>
               <strong>Categories</strong>
             </Nav.Item>
+            {categories.map((category) => (
+              <Nav.Item key={category}>
+                <LinkContainer
+                  to={{
+                    pathname: '/search',
+                    search: `?category=${category}`,
+                  }}
+                  onClick={() => setSidebarIsOpen(false)}
+                >
+                  <Nav.Link>{category}</Nav.Link>
+                </LinkContainer>
+              </Nav.Item>
+            ))}
           </Nav>
         </div>
         <main>
