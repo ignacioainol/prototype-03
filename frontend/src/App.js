@@ -21,6 +21,7 @@ import { ProfileScreen } from './screens/ProfileScreen';
 import { getError } from './utils';
 import axios from 'axios';
 import { SearchBox } from './components/SearchBox';
+import { SearchScreen } from './screens/SearchScreen';
 
 function App() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -141,6 +142,7 @@ function App() {
             <Routes>
               <Route path="/product/:slug" element={<ProductScreen />}></Route>
               <Route path="/cart" element={<CartScreen />}></Route>
+              <Route path="/search" element={<SearchScreen />}></Route>
               <Route path="/signin" element={<SigninScreen />}></Route>
               <Route path="/signup" element={<SignupScreen />}></Route>
               <Route path="/payment" element={<PaymentScreen />}></Route>
