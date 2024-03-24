@@ -76,7 +76,7 @@ productRouter.get(
       .skip(pageSize * (page - 1))
       .limit(pageSize);
 
-    const countProducts = await roduct.countDocuments({
+    const countProducts = await Product.countDocuments({
       ...queryFilter,
       ...categoryFilter,
       ...priceFilter,

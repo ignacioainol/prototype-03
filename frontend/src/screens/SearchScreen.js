@@ -79,7 +79,7 @@ export const SearchScreen = () => {
   const [{ loading, error, products, pages, countProducts }, dispatch] =
     useReducer(reducer, {
       loading: true,
-      error: ',',
+      error: '',
     });
 
   useEffect(() => {
@@ -103,7 +103,7 @@ export const SearchScreen = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { data } = axios.get(`/api/products/categories`);
+        const { data } = await axios.get(`/api/products/categories`);
         setCategories(data);
       } catch (error) {
         toast.error(getError(error));
@@ -112,6 +112,17 @@ export const SearchScreen = () => {
     fetchCategories();
   }, [dispatch]);
 
+  // const getFilterUrl = (filter) => {
+  //   const filterPage = filter.page || page;
+  //   const filterCategory = filter.category || category;
+  //   const filterQuery = filter.query || query;
+  //   const filterRating = filter.rating || rating;
+  //   const filterPrice = filter.price || price;
+  //   const sortOrder = filter.order || order;
+
+  //   return `/search?category=${filterCategory}&query=${filterQuery}&price=${filterPrice}&rating=${filterRating}&order=${sortOrder}&page=${filterPage}`;
+  // };
+
   const getFilterUrl = (filter) => {
     const filterPage = filter.page || page;
     const filterCategory = filter.category || category;
@@ -119,7 +130,26 @@ export const SearchScreen = () => {
     const filterRating = filter.rating || rating;
     const filterPrice = filter.price || price;
     const sortOrder = filter.order || order;
-    return `/search?category=${filterCategory}&query=${filterQuery}&price=${filterPrice}&rating=${filterRating}&order=${sortOrder}&page=${filterPage}`;
+
+    // Construir un objeto URLSearchParams para manejar los parámetros de búsqueda
+    const searchParams = new URLSearchParams({
+      category: filterCategory,
+      query: filterQuery,
+      price: filterPrice,
+      rating: filterRating,
+      order: sortOrder,
+      page: filterPage,
+    });
+
+    // Obtener la cadena de búsqueda del objeto URLSearchParams
+    const searchString = searchParams.toString();
+
+    // Retornar un objeto que coincide con la estructura necesaria para la propiedad 'to' del enlace
+    return {
+      pathname: '/search',
+      search: searchString ? `?${searchString}` : '',
+      hash: '#hash',
+    };
   };
 
   return (
@@ -184,7 +214,7 @@ export const SearchScreen = () => {
                     to={getFilterUrl({ rating: r.rating })}
                     className={`${r.rating}` === `${rating}` ? 'text-bold' : ''}
                   >
-                    <Rating caption={'& up'} rating={r.rating}></Rating>
+                    <Rating caption={' & up'} rating={r.rating}></Rating>
                   </Link>
                 </li>
               ))}
@@ -193,7 +223,7 @@ export const SearchScreen = () => {
                   to={getFilterUrl({ rating: 'all' })}
                   className={`${rating}` === `all` ? 'text-bold' : ''}
                 >
-                  <Rating caption={'& up'} rating={0}></Rating>
+                  <Rating caption={' & up'} rating={0}></Rating>
                 </Link>
               </li>
             </ul>
