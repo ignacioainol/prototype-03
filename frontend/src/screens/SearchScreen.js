@@ -131,7 +131,6 @@ export const SearchScreen = () => {
     const filterPrice = filter.price || price;
     const sortOrder = filter.order || order;
 
-    // Construir un objeto URLSearchParams para manejar los parámetros de búsqueda
     const searchParams = new URLSearchParams({
       category: filterCategory,
       query: filterQuery,
@@ -141,10 +140,8 @@ export const SearchScreen = () => {
       page: filterPage,
     });
 
-    // Obtener la cadena de búsqueda del objeto URLSearchParams
     const searchString = searchParams.toString();
 
-    // Retornar un objeto que coincide con la estructura necesaria para la propiedad 'to' del enlace
     return {
       pathname: '/search',
       search: searchString ? `?${searchString}` : '',
@@ -264,8 +261,8 @@ export const SearchScreen = () => {
                   >
                     <option value="newest">Newest Arrivals</option>
                     <option value="lowest">Price: Low to High</option>
-                    <option value="newest">Price: High to Low</option>
-                    <option value="newest">Avg. Customer Reviews</option>
+                    <option value="highest">Price: High to Low</option>
+                    <option value="toprated">Avg. Customer Reviews</option>
                   </select>
                 </Col>
               </Row>
