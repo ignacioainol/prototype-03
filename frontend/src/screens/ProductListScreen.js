@@ -1,10 +1,12 @@
 import axios from 'axios';
 import React, { Fragment, useContext, useEffect, useReducer } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { getError } from '../utils';
 import { Store } from '../Store';
 import { LoadingBox } from '../components/LoadingBox';
 import { MessageBox } from '../components/MessageBox';
+import { Button, Col, Row } from 'react-bootstrap';
+import { toast } from 'react-toastify';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -20,16 +22,24 @@ const reducer = (state, action) => {
       };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
+    case 'CREATE_REQUEST':
+      return { ...state, loadingCreate: true };
+    case 'CREATE_SUCCESS':
+      return { ...state, loadingCreate: false };
+    case 'CREATE_FAIL':
+      return { ...state, loadingCreate: false };
     default:
       return state;
   }
 };
 
 export const ProductListScreen = () => {
-  const [{ loading, error, products, pages }, dispatch] = useReducer(reducer, {
-    loading: true,
-    error: '',
-  });
+  const navigate = useNavigate();
+  const [{ loading, error, products, pages, loadingCreate }, dispatch] =
+    useReducer(reducer, {
+      loading: true,
+      error: '',
+    });
 
   const { search, pathname } = useLocation();
   const sp = new URLSearchParams(search);
@@ -37,6 +47,30 @@ export const ProductListScreen = () => {
 
   const { state } = useContext(Store);
   const { userInfo } = state;
+
+  const createHandler = async () => {
+    if (window.confirm('Are you sure to create?')) {
+      try {
+        dispatch({ type: 'CREATE_REQUEST' });
+        const { data } = await axios.post(
+          '/api/products',
+          {},
+          {
+            headers: { Authorization: `Bearer ${userInfo.token}` },
+          }
+        );
+        toast.success('Product created successfully');
+        dispatch({ type: 'CREATE_SUCCESS' });
+        navigate(`/admin/product/${data.product._id}`);
+      } catch (error) {
+        toast.error(getError(error));
+        dispatch({
+          type: 'CREATE_FAIL',
+          payload: error,
+        });
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,7 +91,19 @@ export const ProductListScreen = () => {
 
   return (
     <div>
-      <h1>Products</h1>
+      <Row>
+        <Col>
+          <h1>Products</h1>
+        </Col>
+        <Col className="col text-end">
+          <div>
+            <Button type="button" onClick={createHandler}>
+              Create Product
+            </Button>
+          </div>
+        </Col>
+      </Row>
+      {loadingCreate && <LoadingBox></LoadingBox>}
       {loading ? (
         <LoadingBox></LoadingBox>
       ) : error ? (
