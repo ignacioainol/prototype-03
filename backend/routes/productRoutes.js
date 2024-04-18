@@ -33,6 +33,8 @@ productRouter.post(
   })
 );
 
+// productRouter.get('/:id',)
+
 productRouter.get(
   '/admin',
   isAuth,
