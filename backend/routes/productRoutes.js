@@ -33,7 +33,31 @@ productRouter.post(
   })
 );
 
-// productRouter.get('/:id',)
+productRouter.put(
+  '/:id',
+  isAuth,
+  isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const productId = req.params.id;
+    const product = await Product.findById(productId);
+
+    if (product) {
+      product.name = req.body.name || product.name;
+      product.slug = req.body.slug || product.slug;
+      product.image = req.body.image || product.image;
+      product.brand = req.body.brand || product.brand;
+      product.category = req.body.category || product.category;
+      product.description = req.body.description || product.description;
+      product.price = req.body.price || product.price;
+      product.countInStock = req.body.countInStock || product.countInStock;
+
+      await product.save();
+      res.send({ message: 'Product updated' });
+    } else {
+      res.status(404).send({ message: 'Product not found' });
+    }
+  })
+);
 
 productRouter.get(
   '/admin',
