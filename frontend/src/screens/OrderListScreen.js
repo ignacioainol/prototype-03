@@ -17,6 +17,27 @@ const reducer = (state, action) => {
       return { ...state, loading: false, orders: action.payload };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
+    case 'DELETE_REQUEST':
+      return { ...state, loadingDelete: true, successDelete: false };
+    case 'DELETE_SUCCESS':
+      return {
+        ...state,
+        loadingDelete: false,
+        orders: action.payload,
+        successDelete: true,
+      };
+    case 'DELETE_FAIL':
+      return {
+        ...state,
+        loadingDelete: false,
+        successDelete: false,
+      };
+    case 'DELETE_RESET':
+      return {
+        ...state,
+        loadingDelete: false,
+        successDelete: false,
+      };
     default:
       return state;
   }
@@ -24,10 +45,11 @@ const reducer = (state, action) => {
 
 export const OrderListScreen = () => {
   const navigate = useNavigate();
-  const [{ loading, error, orders }, dispatch] = useReducer(reducer, {
-    loading: true,
-    error: '',
-  });
+  const [{ loading, error, orders, loadingDelete, successDelete }, dispatch] =
+    useReducer(reducer, {
+      loading: true,
+      error: '',
+    });
   const { state } = useContext(Store);
   const { userInfo } = state;
 
@@ -40,15 +62,35 @@ export const OrderListScreen = () => {
             Authorization: `Bearer ${userInfo.token}`,
           },
         });
-        console.log(data);
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (error) {
         dispatch({ type: 'FETCH_FAIL' });
         toast.error(getError(error));
       }
     };
+    if (successDelete) {
+      dispatch({ type: 'DELETE_RESET' });
+    }
     fetchData();
-  }, [userInfo]);
+  }, [userInfo, successDelete]);
+
+  const deleteOrderHandler = async (orderId) => {
+    if (window.confirm('Are you sure to delete?')) {
+      try {
+        dispatch({ type: 'DELETE_REQUEST' });
+        await axios.delete(`/api/orders/${orderId}`, {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        });
+        dispatch({ type: 'DELETE_SUCCESS' });
+        toast.success('Order deleted successfully');
+      } catch (error) {
+        dispatch({ type: 'DELETE_FAIL' });
+        toast.error(getError(error));
+      }
+    }
+  };
 
   return (
     <div>
@@ -56,6 +98,7 @@ export const OrderListScreen = () => {
         <title>Orders</title>
       </Helmet>
       <h1>Orders</h1>
+      {loadingDelete && <LoadingBox />}
       {loading ? (
         <LoadingBox></LoadingBox>
       ) : error ? (
@@ -93,6 +136,14 @@ export const OrderListScreen = () => {
                     onClick={() => navigate(`/order/${order._id}`)}
                   >
                     Details
+                  </Button>
+
+                  <Button
+                    type="button"
+                    variant="danger"
+                    onClick={() => deleteOrderHandler(order._id)}
+                  >
+                    Delete
                   </Button>
                 </td>
               </tr>
