@@ -23,6 +23,12 @@ const reducer = (state, action) => {
       return { ...state, loadingUpdate: false };
     case 'UPDATE_FAIL':
       return { ...state, loadingUpdate: false };
+    case 'UPLOAD_REQUEST':
+      return { ...state, loadingUpload: true, errorUpload: '' };
+    case 'UPLOAD_SUCCESS':
+      return { ...state, loadingUpload: false, errorUpload: '' };
+    case 'UPLOAD_FAIL':
+      return { ...state, loadingUpload: false, errorUpload: action.payload };
     default:
       return state;
   }
@@ -34,10 +40,11 @@ export const ProductEditScreen = () => {
   //   const { id: productId } = params;
   const { state } = useContext(Store);
   const { userInfo } = state;
-  const [{ loading, error, loadingUpdate }, dispatch] = useReducer(reducer, {
-    loading: true,
-    error: '',
-  });
+  const [{ loading, error, loadingUpdate, loadingUpload }, dispatch] =
+    useReducer(reducer, {
+      loading: true,
+      error: '',
+    });
 
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
@@ -114,6 +121,27 @@ export const ProductEditScreen = () => {
     }
   };
 
+  const uploadFileHandler = async (e) => {
+    const file = e.target.files[0];
+    const bodyFormData = new FormData();
+    bodyFormData.append('file', file);
+    try {
+      dispatch({ type: 'UPLOAD_REQUEST' });
+      const { data } = await axios.post('/api/upload', bodyFormData, {
+        headers: {
+          'Content-type': 'multipart/form-data',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      });
+      dispatch({ type: 'UPLOAD_SUCCESS' });
+      toast.success('Upload uploaded successfully');
+      setImage(data.secure_url);
+    } catch (error) {
+      toast.error(getError(error));
+      dispatch({ type: 'UPLOAD_FAIL', payload: getError(error) });
+    }
+  };
+
   return (
     <Container className="small-container">
       <Helmet>
@@ -156,12 +184,18 @@ export const ProductEditScreen = () => {
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="image">
-            <Form.Label>Image</Form.Label>
+            <Form.Label>Image File</Form.Label>
             <Form.Control
               value={image}
               onChange={(e) => setImage(e.target.value)}
               required
             />
+          </Form.Group>
+
+          <Form.Group className="mb-3" controlId="imageFile">
+            <Form.Label>Upload File</Form.Label>
+            <Form.Control type="file" onChange={uploadFileHandler} />
+            {loadingUpload && <LoadingBox />}
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="category">
