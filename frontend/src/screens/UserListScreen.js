@@ -5,6 +5,8 @@ import { LoadingBox } from '../components/LoadingBox';
 import { MessageBox } from '../components/MessageBox';
 import { getError } from '../utils';
 import { Helmet } from 'react-helmet-async';
+import { Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -20,6 +22,7 @@ const reducer = (state, action) => {
 };
 
 export const UserListScreen = () => {
+  const navigate = useNavigate();
   const { state } = useContext(Store);
   const { userInfo } = state;
   const [{ loading, error, users }, dispatch] = useReducer(reducer, {
@@ -68,12 +71,20 @@ export const UserListScreen = () => {
           </thead>
           <tbody>
             {users.map((user) => (
-              <tr>
+              <tr key={user._id}>
                 <td>{user._id}</td>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.isAdmin ? 'YES' : 'NO'}</td>
-                <td></td>
+                <td>
+                  <Button
+                    type="button"
+                    variant="light"
+                    onClick={() => navigate(`/admin/user/${user._id}`)}
+                  >
+                    Edit
+                  </Button>
+                </td>
               </tr>
             ))}
           </tbody>

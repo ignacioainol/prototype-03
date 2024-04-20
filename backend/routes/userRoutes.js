@@ -15,6 +15,39 @@ userRouter.get(
   })
 );
 
+userRouter.get(
+  '/:id',
+  isAuth,
+  isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id);
+    console.log(user);
+    if (user) {
+      res.send(user);
+    } else {
+      res.status(404).send({ message: 'User Not Found' });
+    }
+  })
+);
+
+userRouter.put(
+  '/:id',
+  isAuth,
+  isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id);
+    if (user) {
+      user.name = req.body.name || usern.name;
+      user.email = req.body.email || usern.email;
+      user.isAdmin = Boolean(req.body.isAdmin);
+      const updateUser = await user.save();
+      res.send({ message: 'User updated', user: updateUser });
+    } else {
+      res.status(404).send({ message: 'User not found' });
+    }
+  })
+);
+
 userRouter.post(
   '/signup',
   expressAsyncHandler(async (req, res) => {
