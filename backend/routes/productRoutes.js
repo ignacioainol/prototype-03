@@ -74,7 +74,7 @@ productRouter.post(
       product.rating =
         product.reviews.reduce((a, c) => c.rating + a, 0) /
         product.reviews.length;
-      const updatedProduct = await product.save;
+      const updatedProduct = await product.save();
       res.status(201).send({
         message: 'Review Created',
         review: updatedProduct.reviews[updatedProduct.reviews.length - 1],
